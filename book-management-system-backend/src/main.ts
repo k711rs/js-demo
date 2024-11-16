@@ -10,6 +10,7 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'src', 'db', 'data', 'uploads'), {
     prefix: '/uploads',
   });
+  app.enableCors();
   await app.listen(process.env.PORT ?? 8801);
 }
 bootstrap();
