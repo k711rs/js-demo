@@ -6,14 +6,41 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  BadRequestException,
+  UploadedFile,
 } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { storage } from './file-storage';
 
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: storage,
+      limits: {
+        fileSize: 1024 * 1024 * 5,
+      },
+      fileFilter(req, file, callback) {
+        if (file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
+          // Accept the file
+          callback(null, true);
+        } else {
+          // Reject the file
+          callback(new BadRequestException('只能上传图片'), false);
+        }
+      },
+    }),
+  )
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    return file.path;
+  }
 
   @Get('list')
   async list() {
