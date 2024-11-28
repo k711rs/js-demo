@@ -1,18 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  Inject,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { EmailService } from 'src/email/email.service';
+import { RedisService } from 'src/redis/redis.service';
+import { randomUUID } from 'crypto';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
+  @Inject(EmailService)
+  private emailService: EmailService;
+
+  @Inject(RedisService)
+  private redisService: RedisService;
+
+  @Post('create')
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
-  @Get()
+  @Get('register-captcha')
+  async captcha(@Query('address') address: string) {
+    const code = Math.random().toString().slice(2, 8);
+    await this.redisService.set(`captcha_${address}`, code, 5 * 60);
+    await this.emailService.sendMail({
+      to: address,
+      subject: '注册验证码',
+      html: `您的注册验证码为：${code}`,
+    });
+    return '验证码已发送';
+  }
+
+  @Get('list')
   findAll() {
     return this.userService.findAll();
   }

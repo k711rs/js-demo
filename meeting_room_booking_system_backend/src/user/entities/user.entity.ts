@@ -23,7 +23,7 @@ export class User {
   username: string;
 
   @Column({
-    length: 20,
+    length: 32,
     comment: '密码',
   })
   password: string;

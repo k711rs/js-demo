@@ -3,13 +3,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
+import { RedisModule } from './redis/redis.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
-      port: 3306,
+      port: 8091,
       username: 'root',
       password: 'abc123123',
       database: 'meeting_room_booking_system',
@@ -22,6 +24,8 @@ import { UserModule } from './user/user.module';
       },
     }),
     UserModule,
+    RedisModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
