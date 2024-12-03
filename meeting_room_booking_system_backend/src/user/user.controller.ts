@@ -14,7 +14,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { EmailService } from 'src/email/email.service';
 import { RedisService } from 'src/redis/redis.service';
-import { randomUUID } from 'crypto';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -41,6 +41,16 @@ export class UserController {
       html: `您的注册验证码为：${code}`,
     });
     return '验证码已发送';
+  }
+  @Get('init-data')
+  async initData() {
+    await this.userService.initData();
+    return 'done';
+  }
+  @Post('login')
+  async userLogin(@Body() loginUser: LoginUserDto) {
+    console.log(loginUser);
+    return '登录成功';
   }
 
   @Get('list')

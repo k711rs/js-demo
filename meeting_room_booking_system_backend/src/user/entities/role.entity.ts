@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Permission } from './permission.entity';
-import { User } from './user.entity';
 
 @Entity({
   name: 'roles',
@@ -25,9 +24,10 @@ export class Role {
     comment: '角色描述',
   })
   description: string;
+
   @ManyToMany(() => Permission)
   @JoinTable({
     name: 'role_permissions',
   })
-  users: User[];
+  permissions: Permission[];
 }
