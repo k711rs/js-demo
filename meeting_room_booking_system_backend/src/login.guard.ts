@@ -53,7 +53,7 @@ export class LoginGuard implements CanActivate {
     }
 
     try {
-      const token = authorization.split(' ')[1];
+      const token = authorization;
       const data = this.jwtService.verify<JwtUserData>(token);
 
       request.user = {
@@ -64,6 +64,7 @@ export class LoginGuard implements CanActivate {
       };
       return true;
     } catch (e) {
+      console.log('loginguard', e);
       throw new UnauthorizedException('token 失效，请重新登录');
     }
   }
